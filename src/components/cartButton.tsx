@@ -22,11 +22,11 @@ export default function CartButton() {
   }
   useEffect(() => {
     dispatch(getCartTotal());
-  }, [cart]);
+  }, [cart, dispatch]);
   return (
     <>
       <div onClick={toggleOpen} className="relative">
-        <span className="absolute right-0 -top-2 bg-green-300 px-1 text-xs rounded-full">
+        <span className="absolute right-0 -top-2 bg-indigo-600 text-white px-1 text-[12px] rounded-full">
           {cart.length}
         </span>
         <svg
