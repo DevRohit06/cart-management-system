@@ -2,7 +2,6 @@ export const products = [
     {
       id: 1,
       name: "Throwback Hip Bag",
-      href: "#",
       color: "Salmon",
       price: 90.00,
       quantity: 1,
@@ -14,7 +13,6 @@ export const products = [
     {
       id: 2,
       name: "Medium Stuff Satchel",
-      href: "#",
       color: "Blue",
       price: 32.00,
       quantity: 1,
@@ -26,7 +24,6 @@ export const products = [
     {
         id: 3,
         name: "Basic Tee",
-        href: "#",
         quantity: 1,
         imageSrc:
           "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
