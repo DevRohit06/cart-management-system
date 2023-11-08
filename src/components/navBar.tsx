@@ -1,45 +1,102 @@
 "use client";
 import { useState } from "react";
 import CartButton from "./cartButton";
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart } from "@/redux/features/cartSlice";
 export default function NavBar() {
+  const items = useSelector((state: any) => state.allCart.items);
   const [open, setOpen] = useState(false);
-  function toggleCart(){
-    setOpen(!open)
+  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
+  const searchItem = items.filter((item: any) => {
+    return item.name.toLowerCase().includes(search.toLowerCase())
+  })
+
+  function toggleCart() {
+    setOpen(!open);
   }
   return (
     <>
       <div className="relative">
         <header className="header py-4 sticky top-0 bg-white shadow-md flex items-center justify-between px-8 py-02">
           <h1 className="w-3/12 text-2xl font-extrabold">
-            <a href="">
-              Test Store
-            </a>
+            <a href="">Test Store</a>
           </h1>
 
-          <div className="w-3/12 flex justify-end">
-            <a href="">
-              <svg
-                className="h-8 p-1 hover:text-green-500 duration-200"
-                aria-hidden="true"
-                focusable="false"
-                data-prefix="far"
-                data-icon="search"
-                role="img"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="currentColor"
-                  d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"
-                  className=""
-                ></path>
-              </svg>
-            </a>
-              <CartButton />
+          <div className="w-3/12 flex items-center justify-end">
+            <div className="">
+              <div className="max-w-md mx-auto rounded-lg overflow-hidden md:max-w-xl">
+                <div className="">
+                  <div className="w-full px-2">
+                    <div className="relative">
+                      <div className="absolute text-gray-400 top-4 left-4 ">
+                        <svg
+                          viewBox="0 0 24 24"
+                          height='1em'
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          ></g>
+                          <g id="SVGRepo_iconCarrier">
+                            {" "}
+                            <path
+                              d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+                              stroke="#000000"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>{" "}
+                          </g>
+                        </svg>
+                      </div>
+                      <input
+                      onChange={(e) => setSearch(e.target.value)}
+                        type="text"
+                        className="bg-white border-2 border-gray-300 h-12 w-full px-12 rounded-lg focus:outline-none hover:cursor-pointer"
+                        placeholder="Search"
+                        name=""
+                      />
+                      <span className="absolute top-4 right-5 border-l pl-4">
+                        <i className="fa fa-microphone text-gray-500 hover:text-green-500 hover:cursor-pointer"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <CartButton />
           </div>
         </header>
+      {
+        search && (
+          <div className="absolute  w-[305px] rounded-md bg-gray-200 right-20">
+            {
+              searchItem.map((item: any, index: number) => {
+                return (
+                  <div key={index} className="flex items-center justify-between px-4 py-2 border-b border-gray-700">
+                    <div className="flex items-center gap-4">
+                      <img className="w-10 h-10" src={item.imageSrc} alt="" />
+                      <div>
+                        <h1 className="text-black font-semibold">{item.name}</h1>
+                        <h1 className="text-gray-800">₹{item.price}</h1>
+                      </div>
+                    </div>
+                    <div>
+                      <button onClick={() => dispatch(addToCart(item))} className="text-white bg-indigo-600 px-3 py-2 rounded-md text-xl">+</button>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+        )
+      }
       </div>
-
     </>
   );
 }
