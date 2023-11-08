@@ -33,3 +33,10 @@ export const products = [
       },
     // More products...
   ];
+
+export const coupons = [
+    {
+        code: "get20off",
+        discount: 20
+    }
+]

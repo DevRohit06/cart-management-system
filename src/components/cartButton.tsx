@@ -4,24 +4,46 @@ import { Fragment, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { coupons } from "@/utils/products";
 import {
   removeFromCart,
   getCartTotal,
   increaseQuantity,
   decreaseQuantity,
+  applyCode,
 } from "@/redux/features/cartSlice";
+// CartButton component
 export default function CartButton() {
-  const { cart, totalQuantity, totalPrice } = useSelector(
+  const [couponError, setCouponError] = useState(false);
+  // State for storing the coupon code
+  const [couponCode, setCouponCode] = useState("");
+
+  // Select cart, totalQuantity, and totalPrice from the redux state
+  const { cart, totalQuantity, totalPrice, discountedPrice } = useSelector(
     (state: any) => state.allCart
   );
-  const dispatch = useDispatch();
+  console.log(coupons.filter((coupon) => coupon.code === couponCode));
+  // Function to apply a coupon
 
+  const dispatch = useDispatch();
+  function applyCoupon(couponCode: string) {
+    const coupon = coupons.filter((coupon) => coupon.code === couponCode);
+    console.log(coupon);
+    // Check if the coupon code exists in the coupons array
+    if (coupons.some((coupon) => coupon.code === couponCode)) {
+      // If the coupon exists, dispatch the coupon to the redux state
+      dispatch(applyCode(coupon));
+    } else {
+      // If the coupon doesn't exist, set the couponError state to true
+      setCouponError(true);
+    }
+  }
   const [open, setOpen] = useState(false);
   function toggleOpen() {
     setOpen(!open);
   }
   useEffect(() => {
-    dispatch(getCartTotal());
+    dispatch(getCartTotal({}));
   }, [cart, dispatch]);
   return (
     <>
@@ -184,6 +206,40 @@ export default function CartButton() {
                       </div>
 
                       <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                        <div className="flex gap-4 justify-between text-base font-medium text-gray-900">
+                          <div className="flex flex-col w-full">
+                            <input
+                              onChange={(e) => setCouponCode(e.target.value)}
+                              className="bg-gray-100 px-2 h-10 w-full mb-2 rounded-md border-2 border-gray-300 placeholder:text-center"
+                              type="text"
+                              placeholder="Coupon Code"
+                            />
+                            {couponError && (
+                              <div className="flex justify-between items-center px-4 transition-opacity  w-full text-sm bg-red-400 rounded-md text-white text-center">
+                                Invalid coupon code
+                                <button
+                                  type="button"
+                                  className="relative -m-2 p-2 text-white hover:text-gray-500"
+                                  onClick={() => setCouponError(false)}
+                                >
+                                  <span className="absolute -inset-0.5" />
+                                  <span className="sr-only">Close panel</span>
+                                  <XMarkIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => applyCoupon(couponCode)}
+                            className="h-10 px-5 text-white rounded-md py-2.5 bg-indigo-600"
+                          >
+                            Apply
+                          </button>
+                        </div>
+
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <p>Subtotal</p>
                           <p>₹ {totalPrice}</p>
@@ -198,19 +254,6 @@ export default function CartButton() {
                           >
                             Checkout
                           </a>
-                        </div>
-                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                          <p>
-                            or
-                            <button
-                              type="button"
-                              className="font-medium text-indigo-600 hover:text-indigo-500"
-                              onClick={() => setOpen(false)}
-                            >
-                              Continue Shopping
-                              <span aria-hidden="true"> &rarr;</span>
-                            </button>
-                          </p>
                         </div>
                       </div>
                     </div>

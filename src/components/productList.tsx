@@ -26,7 +26,7 @@ export default function ProductList() {
                     disabled
                       className="w-full mt-1 py-2 text-center font-semibold text-white bg-gray-900/80 rounded-xl"
                     >
-                      <h1>Already in Cart</h1>
+                      <h1>Added to cart</h1>
                     </button>
                   );
                 } else {

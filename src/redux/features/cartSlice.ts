@@ -1,25 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { products } from "@/utils/products";
+
 interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    imageSrc: string;
-    color: string;
-    imageAlt: string;
-    quantity: number;
+  id: number;
+  name: string;
+  price: number;
+  imageSrc: string;
+  color: string;
+  imageAlt: string;
+  quantity: number;
 }
+interface Coupon {
+  code: string;
+  discount: number;
+}
+
 interface InitialStateType {
-    cart: CartItem[];
-    items: CartItem[];
-    totalQuantity: number;
-    totalPrice: number;
+  cart: CartItem[];
+  items: CartItem[];
+  totalQuantity: number;
+  totalPrice: number;
+  discountedPrice: number;
 }
 const initialState: InitialStateType = {
   cart: [],
   items: products,
   totalQuantity: 0,
   totalPrice: 0,
+  discountedPrice: 0,
 };
 
 export const cartSlice = createSlice({
@@ -36,9 +44,13 @@ export const cartSlice = createSlice({
         state.cart.push(action.payload);
       }
     },
-    getCartTotal: (state) => {
-      let { totalQuantity, totalPrice } = state.cart.reduce(
-        (cartTotal, cartItem) => {
+    applyCode: (state, action) => {
+      state.totalPrice =
+        state.totalPrice - (state.totalPrice * action.payload[0].discount) / 100;
+    },
+    getCartTotal: (state, action?) => {
+      let { totalQuantity, totalPrice, discountedPrice } = state.cart.reduce(
+        (cartTotal: any, cartItem: any) => {
           const { quantity, price } = cartItem;
           const itemTotal = quantity * price;
           cartTotal.totalQuantity += quantity;
@@ -48,10 +60,11 @@ export const cartSlice = createSlice({
         {
           totalQuantity: 0,
           totalPrice: 0,
+          discountedPrice: 0,
         }
       );
       state.totalQuantity = totalQuantity;
-      state.totalPrice = parseInt(totalPrice.toFixed(2))
+      state.totalPrice = parseInt(totalPrice.toFixed(2));
     },
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter(
@@ -59,26 +72,32 @@ export const cartSlice = createSlice({
       );
     },
     increaseQuantity: (state, action) => {
-        state.cart = state.cart.map((item:any) => {
-            if(item.id === action.payload.id){
-                return {...item, quantity: item.quantity + 1};
-            }
-            return item
-        })
+      state.cart = state.cart.map((item: any) => {
+        if (item.id === action.payload.id) {
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      });
     },
     decreaseQuantity: (state, action) => {
-        state.cart = state.cart.map((item:any) => {
-            if (item.quantity <= 1) {
-                return {...item, quantity: item.quantity = 1};
-            }
-            if(item.id === action.payload.id){
-                return {...item, quantity: item.quantity - 1};
-            }
-            return item
-        })
-    }
+      state.cart = state.cart.map((item: any) => {
+        if (item.quantity <= 1) {
+          return { ...item, quantity: (item.quantity = 1) };
+        }
+        if (item.id === action.payload.id) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      });
+    },
   },
-
 });
-export const { addToCart, removeFromCart, getCartTotal, increaseQuantity, decreaseQuantity } = cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  getCartTotal,
+  increaseQuantity,
+  decreaseQuantity,
+  applyCode,
+} = cartSlice.actions;
 export default cartSlice.reducer;
