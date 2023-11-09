@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { products } from "@/utils/products";
+import { parse } from "path";
 
 interface CartItem {
   id: number;
@@ -45,8 +46,16 @@ export const cartSlice = createSlice({
       }
     },
     applyCode: (state, action) => {
-      state.totalPrice =
-        state.totalPrice - (state.totalPrice * action.payload[0].discount) / 100;
+      const discount = parseInt(
+        ((state.totalPrice * action.payload[0].discount) / 100).toFixed(2)
+      );
+      state.totalPrice = state.totalPrice - discount;
+
+      // Store the discount amount
+      state.discountedPrice = discount;
+    },
+    removeCode: (state, action) => {
+      state.totalPrice = state.totalPrice + state.discountedPrice;
     },
     getCartTotal: (state, action?) => {
       let { totalQuantity, totalPrice, discountedPrice } = state.cart.reduce(
@@ -99,5 +108,6 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   applyCode,
+  removeCode,
 } = cartSlice.actions;
 export default cartSlice.reducer;

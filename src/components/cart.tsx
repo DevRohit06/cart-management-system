@@ -11,10 +11,13 @@ import {
   increaseQuantity,
   decreaseQuantity,
   applyCode,
+  removeCode
 } from "@/redux/features/cartSlice";
 // CartButton component
 export default function CartButton() {
   const [couponError, setCouponError] = useState(false);
+  const [couponSuccess, setCouponSuccess] = useState(false);
+  const [couponApplied, setCouponApplied] = useState(false);
   // State for storing the coupon code
   const [couponCode, setCouponCode] = useState("");
 
@@ -22,18 +25,26 @@ export default function CartButton() {
   const { cart, totalQuantity, totalPrice, discountedPrice } = useSelector(
     (state: any) => state.allCart
   );
-  console.log(coupons.filter((coupon) => coupon.code === couponCode));
+  console.log(
+    coupons.filter((coupon) => coupon.code === couponCode.toLowerCase())
+  );
   // Function to apply a coupon
 
   const dispatch = useDispatch();
   function applyCoupon(couponCode: string) {
-    const coupon = coupons.filter((coupon) => coupon.code === couponCode);
-    console.log(coupon);
+    const coupon = coupons.filter(
+      (coupon) => coupon.code.toLowerCase() === couponCode.toLowerCase()
+    );
     // Check if the coupon code exists in the coupons array
-    if (coupons.some((coupon) => coupon.code === couponCode)) {
+    if (coupon !== undefined && coupon.length > 0 && !couponApplied) {
       // If the coupon exists, dispatch the coupon to the redux state
       dispatch(applyCode(coupon));
-    } else {
+      setCouponSuccess(true);
+      setCouponApplied(true);
+    } else if (couponApplied){
+        dispatch(removeCode(coupon))
+        setCouponApplied(false)
+    }else {
       // If the coupon doesn't exist, set the couponError state to true
       setCouponError(true);
     }
@@ -209,11 +220,30 @@ export default function CartButton() {
                         <div className="flex gap-4 justify-between text-base font-medium text-gray-900">
                           <div className="flex flex-col w-full">
                             <input
-                              onChange={(e) => setCouponCode(e.target.value)}
+                              onChange={(e) =>
+                                setCouponCode(e.target.value.toLowerCase())
+                              }
                               className="bg-gray-100 px-2 h-10 w-full mb-2 rounded-md border-2 border-gray-300 placeholder:text-center"
                               type="text"
                               placeholder="Coupon Code"
                             />
+                            {couponSuccess && (
+                              <div className="flex justify-between items-center px-4 transition-opacity  w-full text-sm bg-green-600 rounded-md text-white text-center">
+                                Coupon Applied Succcessfully
+                                <button
+                                  type="button"
+                                  className="relative -m-2 p-2 text-white hover:text-gray-500"
+                                  onClick={() => setCouponSuccess(false)}
+                                >
+                                  <span className="absolute -inset-0.5" />
+                                  <span className="sr-only">Close panel</span>
+                                  <XMarkIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
+                                </button>
+                              </div>
+                            )}
                             {couponError && (
                               <div className="flex justify-between items-center px-4 transition-opacity  w-full text-sm bg-red-400 rounded-md text-white text-center">
                                 Invalid coupon code
@@ -236,7 +266,9 @@ export default function CartButton() {
                             onClick={() => applyCoupon(couponCode)}
                             className="h-10 px-5 text-white rounded-md py-2.5 bg-indigo-600"
                           >
-                            Apply
+                            {
+                              couponApplied ? "remove" : "Apply"
+                            }
                           </button>
                         </div>
 

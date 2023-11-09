@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import CartButton from "./cartButton";
+import CartButton from "./cart";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/redux/features/cartSlice";
 export default function NavBar() {
