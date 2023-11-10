@@ -1,15 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { products } from "@/utils/products";
 import { parse } from "path";
 
 interface CartItem {
   id: number;
   name: string;
   price: number;
-  imageSrc: string;
-  color: string;
-  imageAlt: string;
-  quantity: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: any;
+  quantity: number ;
 }
 interface Coupon {
   code: string;
@@ -18,14 +18,12 @@ interface Coupon {
 
 interface InitialStateType {
   cart: CartItem[];
-  items: CartItem[];
   totalQuantity: number;
   totalPrice: number;
   discountedPrice: number;
 }
 const initialState: InitialStateType = {
   cart: [],
-  items: products,
   totalQuantity: 0,
   totalPrice: 0,
   discountedPrice: 0,
@@ -39,10 +37,11 @@ export const cartSlice = createSlice({
       let find = state.cart.findIndex(
         (item: any) => item.id === action.payload.id
       );
-      if (find >= 0) {
+      if (find >= 0 || !find) {
         state.cart[find].quantity += 1;
       } else {
         state.cart.push(action.payload);
+
       }
     },
     applyCode: (state, action) => {

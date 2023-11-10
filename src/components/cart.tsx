@@ -4,7 +4,8 @@ import { Fragment, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { coupons } from "@/utils/products";
+import { coupons } from "@/utils/info";
+import { useAxios } from "@/hook/useAxios";
 import {
   removeFromCart,
   getCartTotal,
@@ -15,6 +16,9 @@ import {
 } from "@/redux/features/cartSlice";
 // CartButton component
 export default function CartButton() {
+
+  const data = useAxios("products");
+  console.log(data.response);
   const [couponError, setCouponError] = useState(false);
   const [couponSuccess, setCouponSuccess] = useState(false);
   const [couponApplied, setCouponApplied] = useState(false);
@@ -80,7 +84,7 @@ export default function CartButton() {
         </svg>
       </div>
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Dialog as="div" className="relative z-50" onClose={setOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -142,8 +146,8 @@ export default function CartButton() {
                                   <li key={product.id} className="flex py-6">
                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                       <img
-                                        src={product.imageSrc}
-                                        alt={product.imageAlt}
+                                        src={product.image}
+                                        alt={product.title}
                                         className="h-full w-full object-cover object-center"
                                       />
                                     </div>
@@ -152,17 +156,14 @@ export default function CartButton() {
                                       <div>
                                         <div className="flex justify-between text-base font-medium text-gray-900">
                                           <h3>
-                                            <a href={product.href}>
-                                              {product.name}
+                                            <a href={product?.href}>
+                                              {product.title}
                                             </a>
                                           </h3>
                                           <p className="ml-4">
                                             ₹ {product.price}
                                           </p>
                                         </div>
-                                        <p className="mt-1 text-sm text-gray-500">
-                                          {product.color}
-                                        </p>
                                       </div>
                                       <div className="flex flex-1 items-end justify-between text-sm">
                                         <p className="text-gray-500 flex gap-4 items-center">
@@ -179,7 +180,7 @@ export default function CartButton() {
                                               -
                                             </button>
                                             <div className="bg-gray-200 w-8 py-1 text-center rounded-md">
-                                              {product.quantity}
+                                              {product.quantity || 1}
                                             </div>
 
                                             <button

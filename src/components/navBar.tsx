@@ -3,21 +3,24 @@ import { useState } from "react";
 import CartButton from "./cart";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/redux/features/cartSlice";
+import useAxios from "@/hook/useAxios";
 export default function NavBar() {
-  const items = useSelector((state: any) => state.allCart.items);
+  const {response } = useAxios("products");
+  const items = response || [];
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
+  console.log(items);
   const searchItem = items.filter((item: any) => {
-    return item.name.toLowerCase().includes(search.toLowerCase())
-  })
+    return item.title.toLowerCase().includes(search.toLowerCase());
+  });
 
   function toggleCart() {
     setOpen(!open);
   }
   return (
     <>
-      <div className="relative">
+      <div className="relative z-20">
         <header className="header py-4 sticky top-0 bg-white shadow-md flex items-center justify-between px-8 py-02">
           <h1 className="w-3/12 text-2xl font-extrabold">
             <a href="">Test Store</a>
@@ -32,7 +35,7 @@ export default function NavBar() {
                       <div className="absolute text-gray-400 top-4 left-4 ">
                         <svg
                           viewBox="0 0 24 24"
-                          height='1em'
+                          height="1em"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                         >
@@ -55,7 +58,7 @@ export default function NavBar() {
                         </svg>
                       </div>
                       <input
-                      onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => setSearch(e.target.value)}
                         type="text"
                         className="bg-white border-2 border-gray-300 h-12 w-full px-12 rounded-lg focus:outline-none hover:cursor-pointer"
                         placeholder="Search"
@@ -72,30 +75,34 @@ export default function NavBar() {
             <CartButton />
           </div>
         </header>
-      {
-        search && (
-          <div className="absolute  w-[305px] rounded-md bg-gray-200 right-20">
-            {
-              searchItem.map((item: any, index: number) => {
-                return (
-                  <div key={index} className="flex items-center justify-between px-4 py-2 border-b border-gray-700">
-                    <div className="flex items-center gap-4">
-                      <img className="w-10 h-10" src={item.imageSrc} alt="" />
-                      <div>
-                        <h1 className="text-black font-semibold">{item.name}</h1>
-                        <h1 className="text-gray-800">₹{item.price}</h1>
-                      </div>
-                    </div>
+        {search && (
+          <div className="absolute  w-[305px] rounded-xl overflow-x-hidden bg-gray-200 right-20 h-96 overflow-scroll">
+            {searchItem.map((item: any, index: number) => {
+              return (
+                <div
+                  key={index}
+                  className="z-50 flex items-center justify-between px-4 py-2 border-b border-gray-700"
+                >
+                  <div className="flex items-center gap-4">
+                    <img className="w-10 h-10" src={item.image} alt="" />
                     <div>
-                      <button onClick={() => dispatch(addToCart(item))} className="text-white bg-indigo-600 px-3 py-2 rounded-md text-xl">+</button>
+                      <h1 className="text-black font-semibold">{item.title}</h1>
+                      <h1 className="text-gray-800">₹{item.price}</h1>
                     </div>
                   </div>
-                )
-              })
-            }
+                  <div>
+                    <button
+                      onClick={() => dispatch(addToCart(item))}
+                      className="text-white bg-indigo-600 px-3 py-2 rounded-md text-xl"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )
-      }
+        )}
       </div>
     </>
   );

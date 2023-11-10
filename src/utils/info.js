@@ -3,7 +3,7 @@ export const products = [
       id: 1,
       name: "Throwback Hip Bag",
       color: "Salmon",
-      price: 90.00,
+      price: 600.00,
       quantity: 1,
       imageSrc:
         "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
@@ -14,7 +14,7 @@ export const products = [
       id: 2,
       name: "Medium Stuff Satchel",
       color: "Blue",
-      price: 32.00,
+      price: 900.00,
       quantity: 1,
       imageSrc:
         "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
@@ -28,7 +28,7 @@ export const products = [
         imageSrc:
           "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
         imageAlt: "Front of men's Basic Tee in black.",
-        price: 35,
+        price: 300,
         color: "Black",
       },
     // More products...
