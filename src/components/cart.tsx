@@ -148,7 +148,7 @@ export default function CartButton() {
                                       <img
                                         src={product.image}
                                         alt={product.title}
-                                        className="h-full w-full object-cover object-center"
+                                        className="h-full w-full object-scale-down object-center"
                                       />
                                     </div>
 

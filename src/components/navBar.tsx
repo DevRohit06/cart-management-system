@@ -92,7 +92,7 @@ export default function NavBar() {
                   </div>
                   <div>
                     <button
-                      onClick={() => dispatch(addToCart(item))}
+                      onClick={() => dispatch(addToCart({...item,quantity:1}))}
                       className="text-white bg-indigo-600 px-3 py-2 rounded-md text-xl"
                     >
                       +
